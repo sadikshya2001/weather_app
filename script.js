@@ -1,7 +1,7 @@
 //event listener to get the location of the input 
 document.getElementById("location-input").addEventListener('change', async () => {
     //getting the users entered location
-    const location = document.getElementById("location-input").ariaValueMax;
+    const location = document.getElementById("location-input").value;
 
     // fetching the weather data
     const weatherData = await getWeatherData(location);
@@ -10,7 +10,7 @@ document.getElementById("location-input").addEventListener('change', async () =>
     //displaying the weather data on the page 
     displayWeatherData(weatherData);
 
-} );
+});
 
 const getWeatherData = async (location) => {
     if(!location) {
@@ -18,7 +18,7 @@ const getWeatherData = async (location) => {
     }
 
     const apiKey = '7007bd682e08f8f93d740aefa3d2fddf';
-    const response = await fetch(`https://api.openweathermag.org/data/2.5/weather?q=${location}&appid=${apiKey}`);
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${apiKey}`);
     const data = await response.json();
 
     return data;
@@ -44,14 +44,15 @@ const displayWeatherData = (data) => {
     if(Object.keys(data).length == 0){
         weatherDataElement.innerHTML = "Please enter a location for viewing the weather.";
     }else{
-        const getBackgroundColor = getBackgroundColor(Math.floor(data.main.temp - 273.15));
+
+        const temperatureCelsius = Math.floor(data.main.temp - 273.15);
+        const backgroundColor = getBackgroundColor(temperatureCelsius);
         weatherDataElement.style.backgroundColor = backgroundColor;
 
         weatherDataElement.innerHTML = `
-        <h3>${data.name}</h3>
-        <p>Temperature: ${Math.floor(data.main.temp)}%</p>
-        <p>Wind Speed: ${data.wind.speed} m/s</p>
-        
+            <h3>${data.name}</h3>
+            <p>Temperature: ${temperatureCelsius}°C</p>
+            <p>Wind Speed: ${data.wind.speed} m/s</p>        
         `;
 
     }
