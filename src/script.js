@@ -1,3 +1,5 @@
+import API_KEY from './config.js';
+
 //event listener to get the location of the input 
 document.getElementById("location-input").addEventListener('change', async () => {
     //getting the users entered location
@@ -12,17 +14,38 @@ document.getElementById("location-input").addEventListener('change', async () =>
 
 });
 
-const getWeatherData = async (location) => {
+/*const getWeatherData = async (location) => {
     if(!location) {
         return{};
     }
 
-    const apiKey = '7007bd682e08f8f93d740aefa3d2fddf';
+    //const apiKey = '7007bd682e08f8f93d740aefa3d2fddf';
+    const apiKey = process.env.API_KEY;
     const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${apiKey}`);
     const data = await response.json();
 
     return data;
+}*/
+
+const getWeatherData = async (location) => {
+    if (!location) {
+        return {};
+    }
+
+    //const API_KEY = '7007bd682e08f8f93d740aefa3d2fddf';
+    try {
+        const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${API_KEY}`);
+        if (!response.ok) {
+            throw new Error(`Error fetching weather data: ${response.statusText}`);
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error(error);
+        return {};
+    }
 }
+
 
 function getBackgroundColor(temperature){
     if(temperature < 0){
@@ -59,6 +82,7 @@ const displayWeatherData = (data) => {
 }
 
 window.onload = async () => {
+    //console.log('Window loaded');
     const weatherData = await getWeatherData();
     displayWeatherData(weatherData);
 }
